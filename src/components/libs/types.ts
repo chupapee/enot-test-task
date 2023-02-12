@@ -18,6 +18,10 @@ export interface IFilteredTasks {
   otherDaysTasks: ITaskList;
 }
 
+export interface INews {
+  news: string;
+}
+
 export type ThemeType = 'dark' | 'light';
 
 interface Action<Payload> {

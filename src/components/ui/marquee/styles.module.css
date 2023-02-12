@@ -1,0 +1,22 @@
+.marquee {
+  max-width: 420px;
+  height: 60px;
+
+  text-align: center;
+  display: flex;
+  align-items: center;
+
+  animation: text 80s infinite linear;
+  padding-left: 100%;
+  white-space: nowrap;
+}
+
+@keyframes text {
+  0%{
+    transform: translate(0, 0);
+  }
+
+  100%{
+    transform: translate(-1500%, 0);
+  }
+}

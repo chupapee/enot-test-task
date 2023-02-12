@@ -1,11 +1,12 @@
 import { useMemo, useReducer } from 'react';
 import { createTheme, Paper, ThemeProvider } from '@mui/material';
+
 import { getTheme } from 'components/libs/theme';
+import { Toolbar } from 'components/widgets/Toolbar';
+import { TaskList } from 'components/widgets/TasksList';
 import { initTheme, ThemeContext, themeReducer } from 'components/store';
 
 export function App() {
-  return <div></div>;
-}
   const [theme, dispatch] = useReducer(themeReducer, initTheme);
 
   // Update the theme only if the mode changes
@@ -37,6 +38,8 @@ export function App() {
               bgcolor: 'primary.main',
             }}
           >
+            <Toolbar />
+            <TaskList />
           </Paper>
         </Paper>
       </ThemeProvider>

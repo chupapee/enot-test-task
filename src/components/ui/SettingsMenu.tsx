@@ -1,3 +1,4 @@
+import { useContext, useState } from 'react';
 
 import { Button, Menu, MenuItem, Fade, Tooltip, IconButton, Typography, Grid } from '@mui/material';
 import {
@@ -7,10 +8,16 @@ import {
   Settings,
   VisibilityOffRounded,
 } from '@mui/icons-material';
+import { ThemeContext, TOGGLE_THEME_TYPE } from 'components/store';
 
 export function SettingsMenu() {
+  const { theme, dispatch } = useContext(ThemeContext);
 
   function toggleTheme() {
+    dispatch({
+      type: TOGGLE_THEME_TYPE,
+      payload: theme,
+    });
   }
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);

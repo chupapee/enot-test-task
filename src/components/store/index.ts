@@ -1,6 +1,6 @@
 /* eslint-disable no-case-declarations */
-import { ITaskList, ReducerType, ThemeType } from 'components/libs/types';
-import { createContext, Dispatch } from 'react';
+import { DispatchType, ITaskList, ReducerType, ThemeType } from 'components/libs/types';
+import { createContext } from 'react';
 
 // tasks state
 export const TOGGLE_STATUS_TYPE = 'toggle_status';
@@ -148,7 +148,25 @@ export const themeReducer: ReducerType<ThemeType, ThemeType> = (state, { type })
 
 interface IThemeContext {
   theme: ThemeType;
-  dispatch: Dispatch<{type: string, payload: ThemeType}>;
+  setTheme: DispatchType;
 }
 
-export const ThemeContext = createContext<IThemeContext>({theme: initTheme, dispatch: () => null});
+export const ThemeContext = createContext<IThemeContext>({ theme: initTheme, setTheme: () => null });
+
+// news visibility state
+export const TOGGLE_NEWS_TYPE = 'toggle_news';
+export const initNewsVisibility = true;
+
+export const newsReducer: ReducerType<boolean, boolean> = (state, { type }) => {
+  if (type === TOGGLE_NEWS_TYPE) {
+    return !state;
+  }
+  return state;
+};
+
+interface INewsContext {
+  isNewsVisible: boolean;
+  setIsNewsVisible: DispatchType
+}
+
+export const NewsContext = createContext<INewsContext>({ isNewsVisible: initNewsVisibility, setIsNewsVisible: () => null });

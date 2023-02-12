@@ -16,10 +16,17 @@ function NewsTicker() {
 
   return (
     <Card
-      sx={{ color: 'primary.contrastText', bgcolor: 'primary.main', fontSize: 22 }}
+      sx={{
+        color: 'primary.contrastText',
+        bgcolor: 'primary.main',
+        fontSize: 22,
+      }}
       elevation={24}
     >
-      <Marquee>{isFetching ? 'loading...' : data?.news}</Marquee>
+      <Marquee>
+        {isFetching ? 'loading...' : data?.news}
+        <p style={{ opacity: 0 }}>Lorem ipsum dolor sit amet consectetur ad</p>
+      </Marquee>
     </Card>
   );
 }

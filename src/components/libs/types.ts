@@ -29,4 +29,6 @@ interface Action<Payload> {
   payload: Payload;
 }
 
+export type DispatchType = React.Dispatch<{ type: string, payload: any; }>;
+
 export type ReducerType<State, Payload> = (state: State, action: Action<Payload>) => State;

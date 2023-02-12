@@ -7,16 +7,26 @@ import {
   LightMode,
   Settings,
   VisibilityOffRounded,
+  VisibilityRounded,
 } from '@mui/icons-material';
-import { ThemeContext, TOGGLE_THEME_TYPE } from 'components/store';
+import { NewsContext, ThemeContext, TOGGLE_NEWS_TYPE, TOGGLE_THEME_TYPE } from 'components/store';
 
 export function SettingsMenu() {
-  const { theme, dispatch } = useContext(ThemeContext);
+  const { theme, setTheme } = useContext(ThemeContext);
 
   function toggleTheme() {
-    dispatch({
+    setTheme({
       type: TOGGLE_THEME_TYPE,
       payload: theme,
+    });
+  }
+
+  const { isNewsVisible, setIsNewsVisible } = useContext(NewsContext);
+
+  function toggleNewsVisibility() {
+    setIsNewsVisible({
+      type: TOGGLE_NEWS_TYPE,
+      payload: isNewsVisible,
     });
   }
 
@@ -59,25 +69,29 @@ export function SettingsMenu() {
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
-        {/* add task */}
-        <MenuItem onClick={closeMenu}>
+        {/* news visibility */}
+        <MenuItem onClick={toggleNewsVisibility}>
           <Grid container flexDirection={'row'} alignItems='center'>
             <Grid item sx={{ display: 'flex' }} mr={1}>
-              <AddRounded sx={{ width: '25px' }} />
+              {isNewsVisible ? (
+                <VisibilityOffRounded fontSize='small' />
+              ) : (
+                <VisibilityRounded fontSize='small' />
+              )}
             </Grid>
             <Grid item>
-              <Typography sx={{ fontSize: '20px' }}>Add task</Typography>
+              <Typography>{isNewsVisible ? 'Hide news' : 'Show news'}</Typography>
             </Grid>
           </Grid>
         </MenuItem>
-        {/* news visibility */}
+        {/* add task */}
         <MenuItem onClick={closeMenu}>
-          <Grid container flexDirection={'row'} alignItems='center'>
+          <Grid container flexDirection={'row'} alignItems='center' justifyContent='end'>
             <Grid item sx={{ display: 'flex' }} mr={1}>
-              <VisibilityOffRounded sx={{ width: '25px' }} />
+              <AddRounded fontSize='small' />
             </Grid>
             <Grid item>
-              <Typography sx={{ fontSize: '20px' }}>Hide news</Typography>
+              <Typography>Add task</Typography>
             </Grid>
           </Grid>
         </MenuItem>
@@ -86,13 +100,13 @@ export function SettingsMenu() {
           <Grid container flexDirection={'row'} alignItems='center' justifyContent='end'>
             <Grid item sx={{ display: 'flex' }} mr={1}>
               {theme === 'dark' ? (
-                <Brightness4Rounded sx={{ width: '25px' }} />
+                <Brightness4Rounded fontSize='small' />
               ) : (
-                <LightMode sx={{ width: '25px' }} />
+                <LightMode fontSize='small' />
               )}
             </Grid>
             <Grid item>
-              <Typography sx={{ fontSize: '20px' }}>{theme}</Typography>
+              <Typography>{theme}</Typography>
             </Grid>
           </Grid>
         </MenuItem>

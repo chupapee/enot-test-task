@@ -1,3 +1,5 @@
+import { ITaskList, IFilteredTasks } from './types';
+
 export function formatDate(date: Date): string {
   const today = new Date();
   // calculate is tomorrow
@@ -19,4 +21,19 @@ export function formatDate(date: Date): string {
   const month = preMonth.length < 2 ? `0${preMonth}` : preMonth;
 
   return `${day}/${month}`;
+}
+
+export function filterTasks(tasks: ITaskList): IFilteredTasks {
+  return tasks.reduce<Record<'todayTasks' | 'otherDaysTasks', ITaskList>>(
+    (acc, task) => {
+      const { date } = task;
+      if (date.toLocaleDateString() !== new Date().toLocaleDateString()) {
+        acc.otherDaysTasks.push(task);
+      } else {
+        acc.todayTasks.push(task);
+      }
+      return acc;
+    },
+    { todayTasks: [], otherDaysTasks: [] }
+  );
 }

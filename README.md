@@ -1,6 +1,6 @@
 # Test task for Enot.io
 
-## 🎥 Demonstartion: [https://enot-todo-test.app](https://enot-todo-test.vercel.app/)
+## 🎥 Demonstartion: [https://enot-todo-test.vercel.app](https://enot-todo-test.vercel.app/)
 
 ## 💻 Used stack:
 ### • React Context | Material UI | React Query •

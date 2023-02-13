@@ -1,5 +1,5 @@
 import { useQuery } from 'react-query';
-import { Card } from '@mui/material';
+import { Box, Card } from '@mui/material';
 
 import { getNews } from 'components/libs/api';
 import { Marquee } from 'components/ui/marquee';

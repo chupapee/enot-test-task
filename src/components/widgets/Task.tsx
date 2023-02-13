@@ -22,7 +22,7 @@ export function Task({ taskList, toggleTaskStatus }: IProps) {
         <Box key={id} sx={{ marginBottom: '15px' }} onClick={(e) => e.stopPropagation()}>
           <Stack direction='row' spacing={2} alignItems='center'>
             <StatusLine color={IMPORTANCE_COLORS[importance]} />
-            <Box sx={{ maxWidth: '300px' }}>
+            <Box sx={{ maxWidth: '200px', width: '100%' }}>
               <Typography
                 sx={{
                   textDecoration: isDone ? 'line-through' : 'default',

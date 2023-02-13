@@ -9,7 +9,9 @@ import {
   Select,
   TextField,
   Typography,
+  SelectChangeEvent,
 } from '@mui/material';
+import { INewTask } from 'components/libs/types';
 import { TaskContext } from 'components/store/task/slice';
 import { ChangeEvent, useContext, useState } from 'react';
 
@@ -33,19 +35,24 @@ interface IProps {
   setActive: (active: boolean) => void;
 }
 
-export function NewTask({ active, setActive }: IProps) {
-  const { addTask } = useContext(TaskContext);
+type EventType = {
+  e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent<"low" | "mid" | "high">,
+  field: 'title' | 'description' | 'date' | 'importance';
+};
 
-  const [form, setForm] = useState({ title: '', description: '', date: '', importance: 'low' });
+export function NewTask({ active, setActive }: IProps) {
+  const taskContext = useContext(TaskContext);
+
+  const [form, setForm] = useState<INewTask>({ title: '', description: '', date: '', importance: 'low' });
   const [error, setError] = useState(false);
 
-  function handleChange(e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, type: string) {
-    setForm({ ...form, [type]: e.target.value });
+  function handleChange({e, field}: EventType) {
+    setForm({ ...form, [field]: e.target.value });
   }
 
   function confirmTask() {
     if (form.title.length && form.description.length && form.date.length) {
-      addTask(form);
+      taskContext!.addTask(form);
 
       closePopup();
     } else {
@@ -71,7 +78,7 @@ export function NewTask({ active, setActive }: IProps) {
         <TextField
           required
           value={form.title}
-          onChange={(e) => handleChange(e, 'title')}
+          onChange={(e) => handleChange({e, field: 'title'})}
           label='Title'
           color='secondary'
           variant='standard'
@@ -79,7 +86,7 @@ export function NewTask({ active, setActive }: IProps) {
         <TextField
           required
           value={form.description}
-          onChange={(e) => handleChange(e, 'description')}
+          onChange={(e) => handleChange({e, field: 'description'})}
           label='Description'
           color='secondary'
           variant='standard'
@@ -88,7 +95,7 @@ export function NewTask({ active, setActive }: IProps) {
           required
           type='date'
           value={form.date}
-          onChange={(e) => handleChange(e, 'date')}
+          onChange={(e) => handleChange({e, field: 'date'})}
           color='secondary'
           variant='standard'
         />
@@ -97,7 +104,7 @@ export function NewTask({ active, setActive }: IProps) {
           <Select
             color='primary'
             value={form.importance}
-            onChange={(e) => handleChange(e, 'importance')}
+            onChange={(e) => handleChange({e, field: 'importance'})}
             fullWidth
             variant='standard'
             label='Importance'

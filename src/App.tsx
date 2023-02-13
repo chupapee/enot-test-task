@@ -39,6 +39,7 @@ export function App() {
             <Paper
               sx={{
                 display: 'flex',
+                paddingX: '15px',
                 flexDirection: 'column',
                 alignItems: 'center',
                 minHeight: '100vh',
@@ -48,7 +49,9 @@ export function App() {
             >
               <Paper
                 sx={{
-                  height: '800px',
+                  maxWidth: '430px',
+                  width: '100%',
+                  height: '80vh',
                   overflowY: 'auto',
                   '::-webkit-scrollbar': {
                     display: 'none',
@@ -64,7 +67,7 @@ export function App() {
               </Paper>
               <QueryClientProvider client={queryClient}>
                 <Collapse in={isNewsVisible}>
-                  <Card sx={{ maxWidth: '450px', width: '100%' }}>
+                  <Card sx={{ maxWidth: '100%' }}>
                     <NewsTicker />
                   </Card>
                 </Collapse>

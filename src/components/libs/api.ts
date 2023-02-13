@@ -22,6 +22,6 @@ export async function getNews(): Promise<INews> {
       );
     return AlineNews;
   } catch (error) {
-    return { news: error.toString() };
+    return { news: error!.toString() };
   }
 }

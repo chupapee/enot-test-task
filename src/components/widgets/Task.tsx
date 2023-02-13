@@ -12,7 +12,7 @@ enum IMPORTANCE_COLORS {
 
 interface IProps {
   taskList: ITask[];
-  toggleTaskStatus: ({ id, parentId }: { id: number; parentId: number }) => void;
+  toggleTaskStatus: (task: ITask) => void;
 }
 
 export function Task({ taskList, toggleTaskStatus }: IProps) {
@@ -46,8 +46,13 @@ export function Task({ taskList, toggleTaskStatus }: IProps) {
                 {description}
               </Typography>
             </Box>
-            <Box>
-              <SwitchBtn checked={isDone} onClick={() => toggleTaskStatus({ id, parentId })} />
+            <Box sx={{ marginLeft: 'auto !important', bgColor: 'transparent' }}>
+              <SwitchBtn
+                checked={isDone}
+                onClick={() =>
+                  toggleTaskStatus({ id, parentId, title, description, importance, isDone })
+                }
+              />
             </Box>
           </Stack>
         </Box>

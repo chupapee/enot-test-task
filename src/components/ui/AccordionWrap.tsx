@@ -28,7 +28,7 @@ export function AccordionWrap({ date, children }: { date: Date; children: ReactN
       elevation={16}
       sx={{
         margin: '15px 0',
-        width: 'fit-content',
+        width: '100%',
         borderRadius: '20px',
       }}
     >

@@ -7,6 +7,13 @@ export interface ITask {
   isDone: boolean;
 }
 
+export interface INewTask {
+  title: string;
+  description: string;
+  date: string;
+  importance: 'low' | 'mid' | 'high';
+}
+
 export type ITaskList = {
   id: number;
   date: Date;
@@ -23,12 +30,3 @@ export interface INews {
 }
 
 export type ThemeType = 'dark' | 'light';
-
-interface Action<Payload> {
-  type: string;
-  payload: Payload;
-}
-
-export type DispatchType = React.Dispatch<{ type: string, payload: any; }>;
-
-export type ReducerType<State, Payload> = (state: State, action: Action<Payload>) => State;

@@ -5,64 +5,73 @@ import { Card, Collapse, createTheme, Paper, ThemeProvider } from '@mui/material
 import { getTheme } from 'components/libs/theme';
 import { Toolbar } from 'components/widgets/Toolbar';
 import { TaskList } from 'components/widgets/TasksList';
-import {
-  initNewsVisibility,
-  initTheme,
-  NewsContext,
-  newsReducer,
-  ThemeContext,
-  themeReducer,
-} from 'components/store';
+
 import NewsTicker from 'components/widgets/NewsTicker';
+import { initTheme, ThemeContext, themeReducer } from 'components/store/theme/slice';
+import { initNewsVisibility, NewsContext, newsReducer } from 'components/store/news/slice';
+import { TaskProvider } from 'components/store/task/Provider';
 
 const queryClient = new QueryClient();
 
 export function App() {
-  const [theme, setTheme] = useReducer(themeReducer, initTheme);
+  // theme state
+  const [theme, dispatchTheme] = useReducer(themeReducer, initTheme);
+  function toggleTheme() {
+    dispatchTheme({ type: 'toggle_theme' });
+  }
   // Update the theme only if the mode changes
   const globalTheme = useMemo(() => createTheme(getTheme(theme)), [theme]);
 
-  const [isNewsVisible, setIsNewsVisible] = useReducer(newsReducer, initNewsVisibility);
+  // news state
+  const [isNewsVisible, dispatchNewsVisibility] = useReducer(newsReducer, initNewsVisibility);
+  function toggleNewsVisibility() {
+    dispatchNewsVisibility({ type: 'toggle_news' });
+  }
 
   return (
-    <ThemeContext.Provider value={{ theme, setTheme }}>
+    <ThemeContext.Provider value={{ theme, toggleTheme }}>
       <ThemeProvider theme={globalTheme}>
-        <NewsContext.Provider value={{ isNewsVisible, setIsNewsVisible }}>
-          <Paper
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              minHeight: '100vh',
-              bgColor: 'black',
-              borderRadius: 0,
-            }}
-          >
+        <TaskProvider>
+          <NewsContext.Provider value={{
+            isNewsVisible,
+            toggleNewsVisibility,
+          }}>
             <Paper
               sx={{
-                height: '800px',
-                overflowY: 'auto',
-                '::-webkit-scrollbar': {
-                  display: 'none',
-                },
-                padding: '20px',
-                margin: '20px',
-                borderRadius: '20px',
-                bgcolor: 'primary.main',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                minHeight: '100vh',
+                bgColor: 'black',
+                borderRadius: 0,
               }}
             >
-              <Toolbar />
-              <TaskList />
+              <Paper
+                sx={{
+                  height: '800px',
+                  overflowY: 'auto',
+                  '::-webkit-scrollbar': {
+                    display: 'none',
+                  },
+                  padding: '20px',
+                  margin: '20px',
+                  borderRadius: '20px',
+                  bgcolor: 'primary.main',
+                }}
+              >
+                <Toolbar />
+                <TaskList />
+              </Paper>
+              <QueryClientProvider client={queryClient}>
+                <Collapse in={isNewsVisible}>
+                  <Card sx={{ maxWidth: '450px', width: '100%' }}>
+                    <NewsTicker />
+                  </Card>
+                </Collapse>
+              </QueryClientProvider>
             </Paper>
-            <QueryClientProvider client={queryClient}>
-              <Collapse in={isNewsVisible}>
-                <Card sx={{ maxWidth: '450px', width: '100%' }}>
-                  <NewsTicker />
-                </Card>
-              </Collapse>
-            </QueryClientProvider>
-          </Paper>
-        </NewsContext.Provider>
+          </NewsContext.Provider>
+        </TaskProvider>
       </ThemeProvider>
     </ThemeContext.Provider>
   );

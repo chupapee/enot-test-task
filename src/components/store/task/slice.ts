@@ -1,9 +1,7 @@
 /* eslint-disable no-case-declarations */
-import { DispatchType, ITaskList, ReducerType, ThemeType } from 'components/libs/types';
 import { createContext } from 'react';
+import { INewTask, ITask, ITaskList } from 'components/libs/types';
 
-// tasks state
-export const TOGGLE_STATUS_TYPE = 'toggle_status';
 export const initTasks: ITaskList = [
   {
     id: 1,
@@ -119,54 +117,49 @@ export const initTasks: ITaskList = [
   },
 ];
 
-export const tasksReducer: ReducerType<ITaskList, { id: number, parentId: number; }> =
-(state: ITaskList, { type, payload }) => {
+interface IAction {
+  type: 'ToggleStatus' | 'AddTask';
+  toggledTask?: ITask;
+  newTask?: INewTask;
+}
+
+export const tasksReducer = (state: ITaskList, {type, newTask, toggledTask}: IAction) => {
+  const stateCopy: ITaskList = structuredClone(state); // deep cloning
   switch (type) {
-    case TOGGLE_STATUS_TYPE:
-      const stateCopy: ITaskList = structuredClone(state); // deep cloning
-      const changedTaskList = stateCopy.filter(({ id }) => id === payload.parentId)[0].taskList;
+    // toggle
+    case 'ToggleStatus':
+      const changedTaskList = stateCopy
+        .filter(({ id }) => id === toggledTask!.parentId)[0].taskList;
       const changedTask = changedTaskList.filter(
-        ({ id, parentId }) => id === payload.id && parentId === payload.parentId)[0];
-        changedTask.isDone = !changedTask.isDone;
+        ({ id, parentId }) => id === toggledTask!.id && parentId === toggledTask!.parentId)[0];
+      changedTask.isDone = !changedTask.isDone;
+      return stateCopy;
+    // add
+    case 'AddTask':
+      // const stateCopy = structuredClone(state);
+      const exsistedTasksDate = stateCopy
+        .filter(({ date }) => date.toLocaleDateString() === new Date(newTask!.date).toLocaleDateString());
+      if (exsistedTasksDate.length) {
+        const { id: parentId, taskList } = exsistedTasksDate[0];
+        const id = taskList[taskList.length - 1].id + 1;
+        const fullNewTask: ITask = { ...newTask!, isDone: false, parentId, id };
+        exsistedTasksDate[0].taskList.push(fullNewTask);
         return stateCopy;
-        default: return state;
+      } else {
+        const parentId = stateCopy[stateCopy.length - 1].id + 1;
+        const fullNewTask: ITask = { ...newTask!, parentId, isDone: false, id: 1 };
+        const newTaskList = { id: parentId, date: new Date(newTask!.date), taskList: [fullNewTask] };
+        stateCopy.push(newTaskList);
+        return stateCopy;
       }
-    };
-
-// theme state
-export const TOGGLE_THEME_TYPE = 'toggle_theme';
-export const initTheme: ThemeType = localStorage.getItem('theme') as ThemeType ?? 'dark';
-
-export const themeReducer: ReducerType<ThemeType, ThemeType> = (state, { type }) => {
-  if (type === TOGGLE_THEME_TYPE) {
-    const toggledTheme = state === 'light' ? 'dark' : 'light';
-    localStorage.setItem('theme', toggledTheme);
-    return toggledTheme;
+    default: return state;
   }
-  return state;
 };
 
-interface IThemeContext {
-  theme: ThemeType;
-  setTheme: DispatchType;
+interface ITaskContext {
+  tasks: ITaskList;
+  toggleStatus: (taskInfo: ITask) => void;
+  addTask: (task: INewTask) => void;
 }
 
-export const ThemeContext = createContext<IThemeContext>({ theme: initTheme, setTheme: () => null });
-
-// news visibility state
-export const TOGGLE_NEWS_TYPE = 'toggle_news';
-export const initNewsVisibility = true;
-
-export const newsReducer: ReducerType<boolean, boolean> = (state, { type }) => {
-  if (type === TOGGLE_NEWS_TYPE) {
-    return !state;
-  }
-  return state;
-};
-
-interface INewsContext {
-  isNewsVisible: boolean;
-  setIsNewsVisible: DispatchType
-}
-
-export const NewsContext = createContext<INewsContext>({ isNewsVisible: initNewsVisibility, setIsNewsVisible: () => null });
+export const TaskContext = createContext<ITaskContext | null>(null);

@@ -1,27 +1,23 @@
-import { useState, useReducer, useMemo } from 'react';
+import { useState, useMemo, useContext } from 'react';
 import { Card, Collapse, Grid, Typography } from '@mui/material';
 
 import { Task } from './Task';
 import { AccordionWrap } from 'components/ui/AccordionWrap';
 import { CheckboxBtn } from 'components/ui/CheckboxBtn';
 import { filterTasks } from 'components/libs/helpers';
-import { initTasks, tasksReducer, TOGGLE_STATUS_TYPE } from 'components/store';
+import { TaskContext } from 'components/store/task/slice';
 
 export function TaskList() {
+  const tasksContext = useContext(TaskContext);
+
   const [showTodayTask, setShowTodayTasks] = useState(true);
   function toggleShowTodayTasks() {
     setShowTodayTasks(!showTodayTask);
   }
-
-  const [tasks, dispatch] = useReducer(tasksReducer, initTasks);
-  function toggleTaskStatus({ id, parentId }: { id: number; parentId: number }): void {
-    dispatch({
-      type: TOGGLE_STATUS_TYPE,
-      payload: { id, parentId },
-    });
-  }
-
-  const { todayTasks, otherDaysTasks } = useMemo(() => filterTasks(tasks), [tasks]);
+  const { todayTasks, otherDaysTasks } = useMemo(
+    () => filterTasks(tasksContext!.tasks),
+    [tasksContext]
+  );
 
   return (
     <>
@@ -34,16 +30,16 @@ export function TaskList() {
         </Grid>
       </Grid>
       <Collapse in={showTodayTask}>
-        <Card elevation={16} sx={{ padding: '15px', borderRadius: '20px' }}>
+        <Card elevation={16} sx={{ padding: '15px', borderRadius: '20px', width: '100%' }}>
           {todayTasks?.map(({ id, taskList }) => (
-            <Task toggleTaskStatus={toggleTaskStatus} key={id} taskList={taskList} />
+            <Task toggleTaskStatus={tasksContext!.toggleStatus} key={id} taskList={taskList} />
           ))}
         </Card>
       </Collapse>
 
       {otherDaysTasks.map(({ id, date, taskList }) => (
         <AccordionWrap key={id} date={date}>
-          <Task toggleTaskStatus={toggleTaskStatus} taskList={taskList} />
+          <Task toggleTaskStatus={tasksContext!.toggleStatus} taskList={taskList} />
         </AccordionWrap>
       ))}
     </>

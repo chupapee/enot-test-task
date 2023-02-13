@@ -1,6 +1,6 @@
 import { useContext, useState } from 'react';
 
-import { Button, Menu, MenuItem, Fade, Tooltip, IconButton, Typography, Grid } from '@mui/material';
+import { Menu, MenuItem, Fade, Tooltip, IconButton, Typography, Grid, Box } from '@mui/material';
 import {
   AddRounded,
   Brightness4Rounded,
@@ -9,30 +9,24 @@ import {
   VisibilityOffRounded,
   VisibilityRounded,
 } from '@mui/icons-material';
-import { NewsContext, ThemeContext, TOGGLE_NEWS_TYPE, TOGGLE_THEME_TYPE } from 'components/store';
+
+import { NewTask } from 'components/widgets/NewTask';
+import { ThemeContext } from 'components/store/theme/slice';
+import { NewsContext } from 'components/store/news/slice';
 
 export function SettingsMenu() {
-  const { theme, setTheme } = useContext(ThemeContext);
+  const themeContext = useContext(ThemeContext);
+  const newsContext = useContext(NewsContext);
 
-  function toggleTheme() {
-    setTheme({
-      type: TOGGLE_THEME_TYPE,
-      payload: theme,
-    });
-  }
-
-  const { isNewsVisible, setIsNewsVisible } = useContext(NewsContext);
-
-  function toggleNewsVisibility() {
-    setIsNewsVisible({
-      type: TOGGLE_NEWS_TYPE,
-      payload: isNewsVisible,
-    });
+  const [activeTaskPopup, setActiveTaskPopup] = useState(false);
+  function activateTaskPopup() {
+    setActiveTaskPopup(true);
+    closeMenu();
   }
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
-  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+  const openMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
   const closeMenu = () => {
@@ -41,27 +35,16 @@ export function SettingsMenu() {
 
   return (
     <div>
-      <Button
-        aria-controls={open ? 'fade-menu' : undefined}
-        aria-haspopup='true'
-        aria-expanded={open ? 'true' : undefined}
-        onClick={handleClick}
+      <Box
+        onClick={openMenu}
       >
         <Tooltip title='Settings'>
-          <IconButton
-            onClick={handleClick}
-            aria-controls={open ? 'account-menu' : undefined}
-            aria-haspopup='true'
-            aria-expanded={open ? 'true' : undefined}
-          >
+          <IconButton>
             <Settings sx={{ width: 28, height: 30 }} />
           </IconButton>
         </Tooltip>
-      </Button>
+      </Box>
       <Menu
-        MenuListProps={{
-          'aria-labelledby': 'fade-button',
-        }}
         anchorEl={anchorEl}
         open={open}
         onClose={closeMenu}
@@ -70,22 +53,22 @@ export function SettingsMenu() {
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
         {/* news visibility */}
-        <MenuItem onClick={toggleNewsVisibility}>
+        <MenuItem onClick={newsContext!.toggleNewsVisibility}>
           <Grid container flexDirection={'row'} alignItems='center'>
             <Grid item sx={{ display: 'flex' }} mr={1}>
-              {isNewsVisible ? (
+              {newsContext!.isNewsVisible ? (
                 <VisibilityOffRounded fontSize='small' />
               ) : (
                 <VisibilityRounded fontSize='small' />
               )}
             </Grid>
             <Grid item>
-              <Typography>{isNewsVisible ? 'Hide news' : 'Show news'}</Typography>
+              <Typography>{newsContext!.isNewsVisible ? 'Hide news' : 'Show news'}</Typography>
             </Grid>
           </Grid>
         </MenuItem>
         {/* add task */}
-        <MenuItem onClick={closeMenu}>
+        <MenuItem onClick={activateTaskPopup}>
           <Grid container flexDirection={'row'} alignItems='center' justifyContent='end'>
             <Grid item sx={{ display: 'flex' }} mr={1}>
               <AddRounded fontSize='small' />
@@ -96,21 +79,22 @@ export function SettingsMenu() {
           </Grid>
         </MenuItem>
         {/* theme mode */}
-        <MenuItem onClick={toggleTheme}>
+        <MenuItem onClick={themeContext!.toggleTheme}>
           <Grid container flexDirection={'row'} alignItems='center' justifyContent='end'>
             <Grid item sx={{ display: 'flex' }} mr={1}>
-              {theme === 'dark' ? (
+              {themeContext!.theme === 'dark' ? (
                 <Brightness4Rounded fontSize='small' />
               ) : (
                 <LightMode fontSize='small' />
               )}
             </Grid>
             <Grid item>
-              <Typography>{theme}</Typography>
+              <Typography>{themeContext!.theme}</Typography>
             </Grid>
           </Grid>
         </MenuItem>
       </Menu>
+      <NewTask active={activeTaskPopup} setActive={setActiveTaskPopup} />
     </div>
   );
 }
